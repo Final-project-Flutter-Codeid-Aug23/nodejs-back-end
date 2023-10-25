@@ -24,13 +24,6 @@ class ProductController {
   static async create(req, res) {
     try {
       const { name, userId, description, stock, price, images, categories } = req.body;
-      const newProduct = await product.create({
-        name,
-        userId: +userId,
-        description,
-        stock: +stock,
-        price: +price,
-      });
       if (Array.isArray(images)) {
         let newProductImages = [];
         images.forEach((img) => {
@@ -49,6 +42,13 @@ class ProductController {
       } else {
         throw `categories is not array! please input array of category ids`;
       }
+      const newProduct = await product.create({
+        name,
+        userId: +userId,
+        description,
+        stock: +stock,
+        price: +price,
+      });
       res.status(200).send({ message: `Success Create Product`, data: newProduct });
     } catch (error) {
       res.status(500).send({ message: `Error Create Product`, error });
@@ -70,19 +70,6 @@ class ProductController {
     try {
       const id = +req.params.id;
       const { name, userId, description, stock, price, images, categories } = req.body;
-      await productImage.destroy({ where: { productId: id } });
-      await productCategory.destroy({ where: { productId: id } });
-      const oldProduct = await product.findByPk(id, { include: [productImage, category] });
-      await product.update(
-        {
-          name,
-          userId: +userId,
-          description,
-          stock: +stock,
-          price: +price,
-        },
-        { where: { id: id } }
-      );
       if (Array.isArray(images)) {
         let newProductImages = [];
         images.forEach((img) => {
@@ -101,6 +88,19 @@ class ProductController {
       } else {
         throw `categories is not array! please input array of category ids`;
       }
+      await productImage.destroy({ where: { productId: id } });
+      await productCategory.destroy({ where: { productId: id } });
+      const oldProduct = await product.findByPk(id, { include: [productImage, category] });
+      await product.update(
+        {
+          name,
+          userId: +userId,
+          description,
+          stock: +stock,
+          price: +price,
+        },
+        { where: { id: id } }
+      );
       const updatedProduct = await product.findByPk(id, { include: [productImage, category] });
       res.status(200).send({ message: `Succes Update Product`, oldData: oldProduct, updatedData: updatedProduct });
     } catch (error) {
