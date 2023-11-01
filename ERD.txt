@@ -5,6 +5,7 @@ Table users {
   password varchar
   avatar varchar
   email varchar
+  address varchar
   isAdmin boolean
 }
 
@@ -15,6 +16,7 @@ Table products {
   stock integer
   description text
   price integer
+  unitSold integer
 }
 
 Table productImages {
@@ -48,7 +50,33 @@ Table invoices {
   userId integer [ref: > users.id]
   productId integer [ref: > products.id]
   productCount integer
-  paymentMethod varchar
+  paymentId integer [ref: > payments.id]
+}
+
+Table payments {
+  id integer [primary key]
+  name varchar 
 }
 
 
+
+sequelize-cli model:generate --name product --attributes userId:integer,name:string,description:text,stock:integer,price:integer
+sequelize-cli seed:generate --name product
+
+sequelize-cli model:generate --name productImage --attributes productId:integer,url:text
+sequelize-cli seed:generate --name productImage
+
+sequelize-cli model:generate --name category --attributes name:string,baseColor:string,icon:text
+sequelize-cli seed:generate --name category
+
+sequelize-cli model:generate --name productCategory --attributes productId:integer,categoryId:integer
+sequelize-cli seed:generate --name productCategory 
+
+sequelize-cli model:generate --name user --attributes username:string,password:string,fullname:string,email:string,avatar:text,isAdmin:boolean
+
+sequelize-cli model:generate --name cart --attributes userId:integer,productId:integer,productCount:integer
+
+sequelize-cli model:generate --name invoice --attributes userId:integer,productId:integer,productCount:integer,paymentId:integer
+
+sequelize-cli model:generate --name payment --attributes name:string
+sequelize-cli seed:generate --name payment

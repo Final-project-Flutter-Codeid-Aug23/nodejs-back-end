@@ -12,18 +12,18 @@ class ProductController {
       res.status(500).send({ message: `Error Get Products`, error });
     }
   }
-  static async getOneProduct(req, res) {
+  static async getProductById(req, res) {
     try {
       const id = +req.params.id;
       const productById = await product.findByPk(id, { include: [productImage, category] });
       res.status(200).send({ message: `Success Get One Product`, data: productById });
     } catch (error) {
-      res.status(500).send({ message: `Success Get One Product`, error });
+      res.status(500).send({ message: `Error Get One Product`, error });
     }
   }
   static async create(req, res) {
     try {
-      const { name, userId, description, stock, price, images, categories } = req.body;
+      const { name, description, stock, price, images, categories, adminData} = req.body;
       if (Array.isArray(images)) {
         let newProductImages = [];
         images.forEach((img) => {
@@ -44,7 +44,7 @@ class ProductController {
       }
       const newProduct = await product.create({
         name,
-        userId: +userId,
+        userId: +adminData.id,
         description,
         stock: +stock,
         price: +price,
@@ -61,7 +61,10 @@ class ProductController {
       await product.destroy({ where: { id: id } });
       await productImage.destroy({ where: { productId: id } });
       await productCategory.destroy({ where: { productId: id } });
-      res.status(500).send({ message: `Success Delete Product`, deletedData: deletedProduct });
+      if (!deletedProduct) {
+        throw `Product id ${id} does not exist !`;
+      }
+      res.status(200).send({ message: `Success Delete Product`, deletedData: deletedProduct });
     } catch (error) {
       res.status(500).send({ message: `Error Delete Product`, error });
     }
@@ -102,7 +105,10 @@ class ProductController {
         { where: { id: id } }
       );
       const updatedProduct = await product.findByPk(id, { include: [productImage, category] });
-      res.status(200).send({ message: `Succes Update Product`, oldData: oldProduct, updatedData: updatedProduct });
+      if (!oldProduct || !updatedProduct) {
+        throw `Product id ${id} does not exist !`;
+      }
+      res.status(200).send({ message: `Success Update Product`, oldData: oldProduct, updatedData: updatedProduct });
     } catch (error) {
       res.status(500).send({ message: `Error Update Product`, error });
     }

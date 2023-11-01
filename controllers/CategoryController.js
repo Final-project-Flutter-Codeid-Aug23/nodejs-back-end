@@ -9,13 +9,13 @@ class CategoryController {
       res.status(500).send({ message: `Error Get Categories`, error });
     }
   }
-  static async getOneCategory(req, res) {
+  static async getCategoryById(req, res) {
     try {
       const id = +req.params.id;
       const categoryById = await category.findByPk(id);
       res.status(200).send({ message: `Success Get One Category`, data: categoryById });
     } catch (error) {
-      res.status(500).send({ message: `Success Get One Category`, error });
+      res.status(500).send({ message: `Error Get One Category`, error });
     }
   }
   static async create(req, res) {
@@ -37,7 +37,10 @@ class CategoryController {
       const id = +req.params.id;
       const deletedCategory = await category.findByPk(id);
       await category.destroy({ where: { id: id } });
-      res.status(500).send({ message: `Success Delete Category`, deletedData: deletedCategory });
+      if(deletedCategory){
+        throw `Category id ${id} does not exist !`;
+      }
+      res.status(200).send({ message: `Success Delete Category`, deletedData: deletedCategory });
     } catch (error) {
       res.status(500).send({ message: `Error Delete Category`, error });
     }
@@ -56,7 +59,10 @@ class CategoryController {
         { where: { id: id } }
       );
       const updatedCategory = await category.findByPk(id);
-      res.status(200).send({ message: `Succes Update Category`, oldData: oldCategory, updatedData: updatedCategory})
+      if(!oldCategory || !updatedCategory){
+        throw `Category id ${id} does not exist !`;
+      }
+      res.status(200).send({ message: `Success Update Category`, oldData: oldCategory, updatedData: updatedCategory})
     } catch (error) {
       res.status(500).send({ message: `Error Update Category`, error });
     }

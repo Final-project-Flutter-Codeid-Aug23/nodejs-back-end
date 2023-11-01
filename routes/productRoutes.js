@@ -1,11 +1,11 @@
-const productRoute = require('express').Router()
-const ProductController = require('../controllers/ProductController.js')
+const productRoute = require("express").Router();
+const ProductController = require("../controllers/ProductController.js");
+const { isAdmin, isLogin } = require("../middlewares/auth");
 
+productRoute.get("/", isLogin, ProductController.getProducts);
+productRoute.get("/:id", isLogin, ProductController.getProductById);
+productRoute.post("/create", isLogin, isAdmin, ProductController.create);
+productRoute.delete("/delete/:id", isLogin, isAdmin, ProductController.delete);
+productRoute.put("/update/:id", isLogin, isAdmin, ProductController.update);
 
-productRoute.get('/', ProductController.getProducts)
-productRoute.get('/:id', ProductController.getOneProduct)
-productRoute.post('/create', ProductController.create)
-productRoute.delete('/delete/:id', ProductController.delete)
-productRoute.put('/update/:id', ProductController.update)
-
-module.exports = productRoute
+module.exports = productRoute;
