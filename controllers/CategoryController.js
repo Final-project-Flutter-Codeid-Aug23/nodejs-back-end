@@ -36,10 +36,10 @@ class CategoryController {
     try {
       const id = +req.params.id;
       const deletedCategory = await category.findByPk(id);
-      await category.destroy({ where: { id: id } });
       if(deletedCategory){
         throw `Category id ${id} does not exist !`;
       }
+      await category.destroy({ where: { id: id } });
       res.status(200).send({ message: `Success Delete Category`, deletedData: deletedCategory });
     } catch (error) {
       res.status(500).send({ message: `Error Delete Category`, error });

@@ -6,12 +6,18 @@ module.exports = {
     return queryInterface.bulkInsert("payments", [
       {
         name: "Bank Transfer",
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
       {
         name: "Cash on Delivery",
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
       {
         name: "Debit",
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     ]);
   },

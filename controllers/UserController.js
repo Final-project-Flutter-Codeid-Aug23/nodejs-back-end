@@ -1,6 +1,6 @@
 const { user } = require("../models");
 const { decryptPwd, encryptPwd } = require("../helpers/bcrypt");
-const { tokenGenerator, tokenVerifier } = require("../helpers/jsonwebtoken");
+const { tokenGenerator } = require("../helpers/jsonwebtoken");
 
 class UserController {
   static async getUsers(req, res) {
@@ -15,14 +15,23 @@ class UserController {
     try {
       const id = +req.params.id;
       const userById = await user.findByPk(id);
-      res.status(200).send({ message: `Success Get One User`, data: userById });
+      res.status(200).send({ message: `Success Get User by Id`, data: userById });
     } catch (error) {
-      res.status(500).send({ message: `Error Get One User`, error });
+      res.status(500).send({ message: `Error Get User by Id`, error });
+    }
+  }
+  static async profile(req, res) {
+    try {
+      const id = +req.body.userData.id;
+      const userById = await user.findByPk(id);
+      res.status(200).send({ message: `Success Get Profile`, data: userById });
+    } catch (error) {
+      res.status(500).send({ message: `Error Get Profile`, error });
     }
   }
   static async login(req, res) {
     try {
-      const { username, password} = req.body;
+      const { username, password } = req.body;
       const usernameFound = await user.findOne({ where: { username: username } });
       if (!usernameFound) {
         throw `Username is wrong !`;
@@ -33,7 +42,7 @@ class UserController {
         res.status(200).send({
           message: `Success Login`,
           data: {
-            access_token
+            access_token,
             // username,
             // email,
             // fullname,
@@ -71,10 +80,10 @@ class UserController {
     try {
       const id = +req.params.id;
       const deletedUser = await user.findByPk(id);
-      await user.destroy({ where: { id: id } });
       if (!deletedUser) {
         throw `User id ${id} does not exist !`;
       }
+      await user.destroy({ where: { id: id } });
       res.status(500).send({ message: `Success Delete User`, deletedData: deletedUser });
     } catch (error) {
       res.status(500).send({ message: `Error Delete User`, error });
@@ -115,7 +124,7 @@ class UserController {
       if (newPassword !== confirmNewPassword) {
         throw `New password must be the same with confirm password`;
       }
-      if(oldPassword === newPassword) {
+      if (oldPassword === newPassword) {
         throw `New password must not be the same with old password`;
       }
       await user.update({ password: encryptPwd(newPassword) }, { where: { id: id } });

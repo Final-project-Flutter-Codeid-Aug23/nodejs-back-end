@@ -31,10 +31,10 @@ class CartController {
       const id = req.params.id;
       const userData = req.body.userData;
       const deletedCart = await cart.findByPk(id, { include: product });
-      await cart.destroy({ where: { id: id,  userId: userData.id} });
       if (!deletedCart) {
         throw `Cart id ${id} does not exist !`;
       }
+      await cart.destroy({ where: { id: id,  userId: userData.id} });
       res.status(200).send({ message: `Success Deleting Cart`, deletedData: deletedCart });
     } catch (error) {
       res.status(500).send({ message: `Error Deleting Cart`, error });

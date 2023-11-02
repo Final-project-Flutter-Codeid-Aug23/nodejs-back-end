@@ -58,12 +58,12 @@ class ProductController {
     try {
       const id = +req.params.id;
       const deletedProduct = await product.findByPk(id, { include: [productImage, category] });
-      await product.destroy({ where: { id: id } });
-      await productImage.destroy({ where: { productId: id } });
-      await productCategory.destroy({ where: { productId: id } });
       if (!deletedProduct) {
         throw `Product id ${id} does not exist !`;
       }
+      await product.destroy({ where: { id: id } });
+      await productImage.destroy({ where: { productId: id } });
+      await productCategory.destroy({ where: { productId: id } });
       res.status(200).send({ message: `Success Delete Product`, deletedData: deletedProduct });
     } catch (error) {
       res.status(500).send({ message: `Error Delete Product`, error });
