@@ -6,7 +6,7 @@ const paymentRoutes = require('./paymentRoutes.js')
 const cartRoutes = require('./cartRoutes.js')
 const invoiceRoutes = require('./invoiceRoutes.js')
 
-route.get('/', (req, res) => {
+route.post('/', (req, res) => {
     res.redirect('/users/login')
 })
 route.use('/products', productRoutes);

@@ -8,6 +8,7 @@
     "init-db": "sequelize db:create && sequelize db:migrate",
     "seed-db": "sequelize db:seed:all",
     "destroy-db": "sequelize db:drop",
+    "swagger-autogen": "node ./swagger.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -19,9 +20,11 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
-    "sequelize": "^6.33.0"
+    "sequelize": "^6.33.0",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
-    "sequelize-cli": "^6.6.1"
+    "sequelize-cli": "^6.6.1",
+    "swagger-autogen": "^2.23.7"
   }
 }

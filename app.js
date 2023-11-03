@@ -3,6 +3,23 @@ const app = express()
 const port = process.env.PORT || 3000;
 const routes = require('./routes/index.js')
 const cors = require('cors')
+const swaggerUiOptions = {
+    swaggerOptions: {
+      basicAuth: {
+        name:   'Authorization',
+        schema: {
+          type: 'basic',
+          in:   'header'
+        },
+        value:  'Basic <user:password>'
+      }
+    }
+  }
+
+//Swagger
+const swaggerUi = require('swagger-ui-express')
+const swaggerFile = require('./swagger_output.json')
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile, swaggerUiOptions))
 
 app.use(cors()) 
 app.use(express.json()); 
