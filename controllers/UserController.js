@@ -32,23 +32,26 @@ class UserController {
   static async login(req, res) {
     try {
       const { username, password } = req.body;
+      console.log(username, password);
       const usernameFound = await user.findOne({ where: { username: username } });
       if (!usernameFound) {
         throw `Username is wrong !`;
       }
       if (decryptPwd(password, usernameFound.password)) {
-        // const { username, email, fullname, avatar, address, isAdmin } = usernameFound;
+        const { username, email, fullname, avatar, address, isAdmin } = usernameFound;
         const access_token = tokenGenerator(usernameFound);
         res.status(200).send({
           message: `Success Login`,
           data: {
             access_token,
-            // username,
-            // email,
-            // fullname,
-            // avatar,
-            // address,
-            // isAdmin,
+            userInfo: {
+              username,
+              email,
+              fullname,
+              avatar,
+              address,
+              isAdmin,
+            }
           },
         });
       } else {
