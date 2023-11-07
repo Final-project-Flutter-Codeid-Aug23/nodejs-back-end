@@ -23,8 +23,8 @@ class UserController {
   static async profile(req, res) {
     try {
       const id = +req.body.userData.id;
-      const userById = await user.findByPk(id);
-      res.status(200).send({ message: `Success Get Profile`, data: userById });
+      const { username, email, fullname, avatar, address, isAdmin } = await user.findByPk(id);
+      res.status(200).send({ message: `Success Get Profile`, data: { username, email, fullname, avatar, address, isAdmin } });
     } catch (error) {
       res.status(500).send({ message: `Error Get Profile`, error });
     }
