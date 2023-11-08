@@ -1,11 +1,23 @@
 const { user } = require("../models");
 const { decryptPwd, encryptPwd } = require("../helpers/bcrypt");
 const { tokenGenerator } = require("../helpers/jsonwebtoken");
+const { Op } = require("sequelize");
 
 class UserController {
   static async getUsers(req, res) {
     try {
-      const users = await user.findAll();
+      const username = req.query.username
+      let config = {}
+      if (username) {
+        config = {
+          where: {
+            username: {
+              [Op.substring]: username
+            }
+          }
+        }
+      }
+      const users = await user.findAll(config);
       res.status(200).send({ message: `Success Get Users`, data: users });
     } catch (error) {
       res.status(500).send({ message: `Error Get Users`, error });
