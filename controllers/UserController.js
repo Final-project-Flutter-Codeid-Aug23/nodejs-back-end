@@ -32,7 +32,6 @@ class UserController {
   static async login(req, res) {
     try {
       const { username, password } = req.body;
-      console.log(username, password);
       const usernameFound = await user.findOne({ where: { username: username } });
       if (!usernameFound) {
         throw `Username is wrong !`;
