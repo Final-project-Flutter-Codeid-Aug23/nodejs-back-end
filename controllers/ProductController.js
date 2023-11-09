@@ -1,12 +1,26 @@
+const { Op } = require("sequelize");
 const { product, productImage, category, productCategory } = require("../models");
 
 class ProductController {
   static async getProducts(req, res) {
     try {
-      const products = await product.findAll({
+      const name = req.query.name;
+      let config = {
         include: [productImage, category],
-        order: [["name", "ASC"]],
-      });
+        order: [["id", "ASC"]],
+      };
+      if (name) {
+        config = {
+          where: {
+            name: {
+              [Op.substring]: name
+            }
+          },
+          include: [productImage, category],
+          order: [["id", "ASC"]],
+        }
+      };
+      const products = await product.findAll(config);
       res.status(200).send({ message: `Success Get Products`, data: products });
     } catch (error) {
       res.status(500).send({ message: `Error Get Products`, error });
