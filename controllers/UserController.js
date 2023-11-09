@@ -7,14 +7,21 @@ class UserController {
   static async getUsers(req, res) {
     try {
       const username = req.query.username
-      let config = {}
+      let config = {
+        order: [
+          ['id', 'ASC']
+        ]
+      }
       if (username) {
         config = {
           where: {
             username: {
               [Op.substring]: username
             }
-          }
+          },
+          order: [
+            ['id', 'ASC']
+          ]
         }
       }
       const users = await user.findAll(config);
