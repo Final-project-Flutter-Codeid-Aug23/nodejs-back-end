@@ -3,7 +3,9 @@ const { category } = require("../models");
 class CategoryController {
   static async getCategories(req, res) {
     try {
-      const categories = await category.findAll();
+      const categories = await category.findAll({
+        order: [['id', 'ASC']]
+      });
       res.status(200).send({ message: `Success Get Categories`, data: categories });
     } catch (error) {
       res.status(500).send({ message: `Error Get Categories`, error });
