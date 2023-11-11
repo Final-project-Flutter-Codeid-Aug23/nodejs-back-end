@@ -16,7 +16,6 @@ Table products {
   stock integer
   description text
   price integer
-  unitSold integer
 }
 
 Table productImages {
@@ -45,12 +44,18 @@ Table carts {
   productCount integer
 }
 
-Table invoices {
+Table transactions {
   id integer [primary key]
   userId integer [ref: > users.id]
-  productId integer [ref: > products.id]
-  productCount integer
   paymentId integer [ref: > payments.id]
+  productId integer [ref: > products.id]
+  status string
+  productCount integer
+}
+
+Table invoices {
+  id integer [primary key]
+  transactionId integer [ref: > transactions.id]
 }
 
 Table payments {
@@ -76,7 +81,7 @@ sequelize-cli model:generate --name user --attributes username:string,password:s
 
 sequelize-cli model:generate --name cart --attributes userId:integer,productId:integer,productCount:integer
 
-sequelize-cli model:generate --name invoice --attributes userId:integer,productId:integer,productCount:integer,paymentId:integer
+sequelize-cli model:generate --name invoice --attributes transactionId:integer
 
 sequelize-cli model:generate --name payment --attributes name:string
 sequelize-cli seed:generate --name payment

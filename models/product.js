@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       product.hasMany(models.productImage, {foreignKey: 'productId'})
       product.belongsTo(models.user)
       product.hasMany(models.cart, {foreignKey: 'productId'})
-      // product.hasMany(models.invoice, {foreignKey: 'productId'})
+      product.hasMany(models.transaction, {foreignKey: 'productId'})
     }
   }
   product.init({

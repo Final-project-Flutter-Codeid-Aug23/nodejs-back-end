@@ -40,8 +40,8 @@
       "description": "Table Carts"
     },
     {
-      "name": "Invoice",
-      "description": "Table Invoices"
+      "name": "Transaction",
+      "description": "Table Transactions"
     },
     {
       "name": "Payment",
@@ -1066,9 +1066,9 @@
         }
       }
     },
-    "/{username}/invoices/": {
+    "/{username}/transactions/": {
       "get": {
-        "tags": ["Invoice"],
+        "tags": ["Transaction"],
         "description": "",
         "parameters": [
           {
@@ -1096,9 +1096,9 @@
         }
       }
     },
-    "/{username}/invoices/all": {
+    "/{username}/transactions/all": {
       "get": {
-        "tags": ["Invoice"],
+        "tags": ["Transaction"],
         "description": "",
         "parameters": [
           {
@@ -1126,9 +1126,9 @@
         }
       }
     },
-    "/{username}/invoices/{id}": {
+    "/{username}/transactions/{id}": {
       "get": {
-        "tags": ["Invoice"],
+        "tags": ["Transaction"],
         "description": "",
         "parameters": [
           {
@@ -1162,9 +1162,9 @@
         }
       }
     },
-    "/{username}/invoices/checkout": {
+    "/{username}/transactions/checkout": {
       "post": {
-        "tags": ["Invoice"],
+        "tags": ["Transaction"],
         "description": "",
         "parameters": [
           {
@@ -1190,8 +1190,95 @@
                 "productCount": {
                   "example": "any"
                 },
+                "status": {
+                  "example": "any"
+                },
                 "paymentId": {
                   "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/{username}/transactions/delivery/{id}": {
+      "put": {
+        "tags": ["Transaction"],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "access_token",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "example": "On Delivery"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/{username}/transactions/arrive/{id}": {
+      "put": {
+        "tags": ["Transaction"],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "access_token",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "example": "Arrive at Destination"
                 }
               }
             }

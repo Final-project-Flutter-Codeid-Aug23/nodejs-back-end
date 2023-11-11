@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       user.hasMany(models.product, {foreignKey: 'userId'})
       user.hasMany(models.cart, {foreignKey: 'userId'})
-      // user.hasMany(models.invoice, {foreignKey: 'userId'})
+      user.hasMany(models.transaction, {foreignKey: 'userId'})
 
     }
   }
