@@ -38,6 +38,13 @@ class ProductController {
   static async create(req, res) {
     try {
       const { name, description, stock, price, images, categories, adminData} = req.body;
+      const newProduct = await product.create({
+        name,
+        userId: +adminData.id,
+        description,
+        stock: +stock,
+        price: +price,
+      });
       if (Array.isArray(images)) {
         let newProductImages = [];
         images.forEach((img) => {
@@ -52,17 +59,10 @@ class ProductController {
         categories.forEach((catId) => {
           newProductCategories.push({ productId: newProduct.id, categoryId: +catId });
         });
-        const productCategories = await productImage.bulkCreate(newProductCategories);
+        const productCategories = await productCategory.bulkCreate(newProductCategories);
       } else {
         throw `categories is not array! please input array of category ids`;
       }
-      const newProduct = await product.create({
-        name,
-        userId: +adminData.id,
-        description,
-        stock: +stock,
-        price: +price,
-      });
       res.status(200).send({ message: `Success Create Product`, data: newProduct });
     } catch (error) {
       res.status(500).send({ message: `Error Create Product`, error });
