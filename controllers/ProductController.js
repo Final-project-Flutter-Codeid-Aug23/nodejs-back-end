@@ -87,6 +87,8 @@ class ProductController {
     try {
       const id = +req.params.id;
       const { name, userId, description, stock, price, images, categories } = req.body;
+      await productImage.destroy({ where: { productId: id } });
+      await productCategory.destroy({ where: { productId: id } });
       if (Array.isArray(images)) {
         let newProductImages = [];
         images.forEach((img) => {
@@ -105,8 +107,6 @@ class ProductController {
       } else {
         throw `categories is not array! please input array of category ids`;
       }
-      await productImage.destroy({ where: { productId: id } });
-      await productCategory.destroy({ where: { productId: id } });
       const oldProduct = await product.findByPk(id, { include: [productImage, category] });
       await product.update(
         {
