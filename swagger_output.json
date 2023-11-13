@@ -36,6 +36,10 @@
       "description": "Table Categories"
     },
     {
+      "name": "Payment",
+      "description": "Table Payments"
+    },
+    {
       "name": "Cart",
       "description": "Table Carts"
     },
@@ -44,8 +48,8 @@
       "description": "Table Transactions"
     },
     {
-      "name": "Payment",
-      "description": "Table Payments"
+      "name": "Invoice",
+      "description": "Table Invoices"
     }
   ],
   "paths": {
@@ -899,17 +903,11 @@
         }
       }
     },
-    "/{username}/carts/": {
+    "/carts/": {
       "get": {
         "tags": ["Cart"],
         "description": "",
         "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "access_token",
             "in": "header",
@@ -929,17 +927,11 @@
         }
       }
     },
-    "/{username}/carts/add": {
+    "/carts/add": {
       "post": {
         "tags": ["Cart"],
         "description": "",
         "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "access_token",
             "in": "header",
@@ -974,17 +966,11 @@
         }
       }
     },
-    "/{username}/carts/delete/{id}": {
+    "/carts/delete/{id}": {
       "delete": {
         "tags": ["Cart"],
         "description": "",
         "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "id",
             "in": "path",
@@ -1018,17 +1004,11 @@
         }
       }
     },
-    "/{username}/carts/updateCount/{id}": {
+    "/carts/updateCount/{id}": {
       "put": {
         "tags": ["Cart"],
         "description": "",
         "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "id",
             "in": "path",
@@ -1066,17 +1046,11 @@
         }
       }
     },
-    "/{username}/transactions/": {
+    "/transactions/": {
       "get": {
         "tags": ["Transaction"],
         "description": "",
         "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "access_token",
             "in": "header",
@@ -1096,17 +1070,11 @@
         }
       }
     },
-    "/{username}/transactions/all": {
+    "/transactions/all": {
       "get": {
         "tags": ["Transaction"],
         "description": "",
         "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "access_token",
             "in": "header",
@@ -1126,7 +1094,7 @@
         }
       }
     },
-    "/{username}/transactions/{id}": {
+    "/transactions/{id}": {
       "get": {
         "tags": ["Transaction"],
         "description": "",
@@ -1162,17 +1130,11 @@
         }
       }
     },
-    "/{username}/transactions/checkout": {
+    "/transactions/checkout": {
       "post": {
         "tags": ["Transaction"],
         "description": "",
         "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "access_token",
             "in": "header",
@@ -1188,9 +1150,6 @@
                   "example": "any"
                 },
                 "productCount": {
-                  "example": "any"
-                },
-                "status": {
                   "example": "any"
                 },
                 "paymentId": {
@@ -1213,7 +1172,7 @@
         }
       }
     },
-    "/{username}/transactions/delivery/{id}": {
+    "/transactions/delivery/{id}": {
       "put": {
         "tags": ["Transaction"],
         "description": "",
@@ -1228,18 +1187,6 @@
             "name": "access_token",
             "in": "header",
             "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "example": "On Delivery"
-                }
-              }
-            }
           }
         ],
         "responses": {
@@ -1255,7 +1202,7 @@
         }
       }
     },
-    "/{username}/transactions/arrive/{id}": {
+    "/transactions/arrive/{id}": {
       "put": {
         "tags": ["Transaction"],
         "description": "",
@@ -1270,18 +1217,144 @@
             "name": "access_token",
             "in": "header",
             "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/transactions/cancel/{id}": {
+      "put": {
+        "tags": ["Transaction"],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "example": "Arrive at Destination"
-                }
-              }
-            }
+            "name": "access_token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/transactions/done/{id}": {
+      "put": {
+        "tags": ["Transaction"],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "access_token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/invoices/": {
+      "get": {
+        "tags": ["Invoice"],
+        "description": "",
+        "parameters": [
+          {
+            "name": "access_token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/invoices/all": {
+      "get": {
+        "tags": ["Invoice"],
+        "description": "",
+        "parameters": [
+          {
+            "name": "access_token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/invoices/{id}": {
+      "get": {
+        "tags": ["Invoice"],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "access_token",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {

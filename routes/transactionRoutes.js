@@ -7,7 +7,8 @@ transactionRoute.get('/all', isLogin, isAdmin, TransactionController.getAllTrans
 transactionRoute.get('/:id', isLogin, TransactionController.getTransactionById)
 transactionRoute.post('/checkout', isLogin, TransactionController.checkout)
 transactionRoute.put('/delivery/:id', isLogin, isAdmin, TransactionController.delivery)
-transactionRoute.put('/arrive/:id', isLogin, TransactionController.arrive)
-// transactionRoute.delete('/delete/:id', isLogin, isAdmin, TransactionController.delete)
+transactionRoute.put('/arrive/:id', isLogin, isAdmin, TransactionController.arrive)
+transactionRoute.put('/cancel/:id', isLogin, TransactionController.cancel)
+transactionRoute.put('/done/:id', isLogin, TransactionController.done)
 
 module.exports = transactionRoute

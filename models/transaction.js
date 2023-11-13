@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       transaction.belongsTo(models.user)
       transaction.belongsTo(models.product)
       transaction.belongsTo(models.payment)
+      transaction.hasOne(models.invoice)
     }
   }
   transaction.init({

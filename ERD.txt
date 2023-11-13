@@ -78,8 +78,11 @@ sequelize-cli model:generate --name productCategory --attributes productId:integ
 sequelize-cli seed:generate --name productCategory 
 
 sequelize-cli model:generate --name user --attributes username:string,password:string,fullname:string,email:string,avatar:text,isAdmin:boolean
+sequelize-cli seed:generate --name user 
 
 sequelize-cli model:generate --name cart --attributes userId:integer,productId:integer,productCount:integer
+
+sequelize-cli model:generate --name transaction --attributes userId:string,productId:integer,paymentId:integer,status:string,productCount:integer
 
 sequelize-cli model:generate --name invoice --attributes transactionId:integer
 

@@ -5,6 +5,7 @@ const userRoutes = require('./userRoutes.js')
 const paymentRoutes = require('./paymentRoutes.js')
 const cartRoutes = require('./cartRoutes.js')
 const transactionRoutes = require('./transactionRoutes.js')
+const invoiceRoutes = require('./invoiceRoutes.js')
 
 route.post('/', (req, res) => {
     res.redirect('/users/login')
@@ -13,6 +14,7 @@ route.use('/products', productRoutes);
 route.use('/categories', categoryRoutes);
 route.use('/users', userRoutes);
 route.use('/payments', paymentRoutes);
-route.use('/:username/carts', cartRoutes);
-route.use('/:username/transactions', transactionRoutes);
+route.use('/carts', cartRoutes);
+route.use('/transactions', transactionRoutes);
+route.use('/invoices', invoiceRoutes);
 module.exports = route
