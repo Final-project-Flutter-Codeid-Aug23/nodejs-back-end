@@ -105,7 +105,7 @@ class UserController {
         throw `User id ${id} does not exist !`;
       }
       await user.destroy({ where: { id: id } });
-      res.status(500).send({ message: `Success Delete User`, deletedData: deletedUser });
+      res.status(200).send({ message: `Success Delete User`, deletedData: deletedUser });
     } catch (error) {
       res.status(500).send({ message: `Error Delete User`, error });
     }
