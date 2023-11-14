@@ -43,7 +43,7 @@ class UserController {
     try {
       const id = +req.body.userData.id;
       const { username, email, fullname, avatar, address, isAdmin } = await user.findByPk(id);
-      res.status(200).send({ message: `Success Get Profile`, data: { username, email, fullname, avatar, address, isAdmin } });
+      res.status(200).send({ message: `Success Get Profile`, data: { username, email, fullname, avatar, address, isAdmin, id } });
     } catch (error) {
       res.status(500).send({ message: `Error Get Profile`, error });
     }
