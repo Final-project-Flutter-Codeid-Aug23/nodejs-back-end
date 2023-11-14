@@ -25,13 +25,12 @@ class TransactionController {
   }
   static async getTransactionById(req, res) {
     try {
-      const id = req.params.id;
+      const id = +req.params.id;
       const userData = req.body.userData;
-      const transactions = await transaction.findByPk({
-        where: { id: id, userId: userData.id },
-        include: product,
+      const transactionById = await transaction.findByPk(id, {
+        include: [user, product, payment],
       });
-      res.status(200).send({ message: `Success Get Transactions ${userData.username}`, data: transactions });
+      res.status(200).send({ message: `Success Get Transactions ${userData.username}`, data: transactionById });
     } catch (error) {
       res.status(500).send({ message: `Error Get Transactions`, error });
     }
@@ -56,33 +55,45 @@ class TransactionController {
   }
   static async delivery(req, res) {
     try {
-      const id = req.params.id;
+      const id = +req.params.id;
       const { userData } = req.body;
       const oldTransaction = await transaction.findOne({ where: { id: +id } });
       if (!oldTransaction) throw `Transaction does not exist`;
       await transaction.update({ status: "On Delivery" }, { where: { id: +id } });
       const updatedTransaction = await transaction.findOne({ where: { id: +id } });
-      res.status(200).send({ message: `Success Update Status Delivery Transaction`, oldData: oldTransaction, updatedData: updatedTransaction });
+      res
+        .status(200)
+        .send({
+          message: `Success Update Status Delivery Transaction`,
+          oldData: oldTransaction,
+          updatedData: updatedTransaction,
+        });
     } catch (error) {
       res.status(500).send({ message: `Error Update Status Delivery Transaction`, error });
     }
   }
   static async arrive(req, res) {
     try {
-      const id = req.params.id;
+      const id = +req.params.id;
       const { userData } = req.body;
       const oldTransaction = await transaction.findOne({ where: { id: +id } });
       if (!oldTransaction) throw `Transaction does not exist`;
       await transaction.update({ status: "Arrived at Destination" }, { where: { id: +id } });
       const updatedTransaction = await transaction.findOne({ where: { id: +id } });
-      res.status(200).send({ message: `Success Update Status Arrive Transaction`, oldData: oldTransaction, updatedData: updatedTransaction });
+      res
+        .status(200)
+        .send({
+          message: `Success Update Status Arrive Transaction`,
+          oldData: oldTransaction,
+          updatedData: updatedTransaction,
+        });
     } catch (error) {
       res.status(500).send({ message: `Error Update Status Arrive Transaction`, error });
     }
   }
   static async cancel(req, res) {
     try {
-      const id = req.params.id;
+      const id = +req.params.id;
       const { userData } = req.body;
       const oldTransaction = await transaction.findOne({ where: { id: +id } });
       if (oldTransaction.status === "Done") throw `Cannot cancel transaction that is already done!`;
@@ -90,26 +101,44 @@ class TransactionController {
       const updatedProduct = await product.findOne({ where: { id: +oldTransaction.productId } });
       if (!updatedProduct) throw `Product does not exist`;
       await transaction.update({ status: "Cancelled" }, { where: { id: +id } });
-      await product.update({ stock: updatedProduct.stock + oldTransaction.productCount }, { where: { id: +oldTransaction.productId } });
+      await product.update(
+        { stock: updatedProduct.stock + oldTransaction.productCount },
+        { where: { id: +oldTransaction.productId } }
+      );
       const updatedTransaction = await transaction.findOne({ where: { id: +id } });
-      res.status(200).send({ message: `Success Update Status Cancel Transaction`, oldData: oldTransaction, updatedData: updatedTransaction });
+      res
+        .status(200)
+        .send({
+          message: `Success Update Status Cancel Transaction`,
+          oldData: oldTransaction,
+          updatedData: updatedTransaction,
+        });
     } catch (error) {
       res.status(500).send({ message: `Error Update Status Cancel Transaction`, error });
     }
   }
   static async done(req, res) {
     try {
-      const id = req.params.id;
+      const id = +req.params.id;
       const { userData } = req.body;
       const oldTransaction = await transaction.findOne({ where: { id: +id } });
       if (!oldTransaction) throw `Transaction does not exist`;
       await transaction.update({ status: "Done" }, { where: { id: +id } });
       const updatedProduct = await product.findOne({ where: { id: +oldTransaction.productId } });
       if (!updatedProduct) throw `Product does not exist`;
-      const newInvoice = await invoice.create({transactionId: id})
+      const newInvoice = await invoice.create({ transactionId: id });
       const updatedTransaction = await transaction.findOne({ where: { id: +id } });
-      await product.update({ unitSold: updatedProduct.unitSold + oldTransaction.productCount }, { where: { id: +oldTransaction.productId } });
-      res.status(200).send({ message: `Success Update Status Done Transaction`, oldData: oldTransaction, updatedData: updatedTransaction });
+      await product.update(
+        { unitSold: updatedProduct.unitSold + oldTransaction.productCount },
+        { where: { id: +oldTransaction.productId } }
+      );
+      res
+        .status(200)
+        .send({
+          message: `Success Update Status Done Transaction`,
+          oldData: oldTransaction,
+          updatedData: updatedTransaction,
+        });
     } catch (error) {
       res.status(500).send({ message: `Error Update Status Done Transaction`, error });
     }
