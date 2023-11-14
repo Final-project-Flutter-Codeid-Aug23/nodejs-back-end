@@ -1,10 +1,13 @@
-const { invoice, transaction, user } = require("../models");
+const { invoice, transaction, user, product, payment } = require("../models");
 
 class InvoiceController {
   static async getAllInvoices(req, res) {
     try {
       const invoices = await invoice.findAll({
-        include: [transaction],
+        include: {
+          model:transaction,
+          include: [product, user, payment]
+        },
       });
       res.status(200).send({ message: `Success Get All Invoices`, data: invoices });
     } catch (error) {
@@ -20,6 +23,7 @@ class InvoiceController {
           where: {
             userId: userData.id,
           },
+          include: [product, user, payment]
         },
       });
       res.status(200).send({ message: `Success Get Invoices ${userData.username}`, data: invoices });
@@ -33,7 +37,10 @@ class InvoiceController {
       const userData = req.body.userData;
       const invoices = await invoice.findByPk({
         where: { id: id },
-        include: [transaction],
+        include: {
+          model:transaction,
+          include: [product, user, payment]
+        },
       });
       res.status(200).send({ message: `Success Get Invoices ${userData.username}`, data: invoices });
     } catch (error) {
