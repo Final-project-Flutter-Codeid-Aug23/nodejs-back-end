@@ -1,10 +1,11 @@
-const { category } = require("../models");
+const { category, product, productImage } = require("../models");
 
 class CategoryController {
   static async getCategories(req, res) {
     try {
       const categories = await category.findAll({
-        order: [['id', 'ASC']]
+        include: [product],
+        order: [["id", "ASC"]],
       });
       res.status(200).send({ message: `Success Get Categories`, data: categories });
     } catch (error) {
@@ -14,7 +15,7 @@ class CategoryController {
   static async getCategoryById(req, res) {
     try {
       const id = +req.params.id;
-      const categoryById = await category.findByPk(id);
+      const categoryById = await category.findByPk(id, { include: [{ model: product, include: [productImage] }] });
       res.status(200).send({ message: `Success Get One Category`, data: categoryById });
     } catch (error) {
       res.status(500).send({ message: `Error Get One Category`, error });
@@ -27,7 +28,7 @@ class CategoryController {
       const newCategory = await category.create({
         name,
         baseColor,
-        icon
+        icon,
       });
       res.status(200).send({ message: `Success Create Category`, data: newCategory });
     } catch (error) {
@@ -38,7 +39,7 @@ class CategoryController {
     try {
       const id = +req.params.id;
       const deletedCategory = await category.findByPk(id);
-      if(deletedCategory){
+      if (deletedCategory) {
         throw `Category id ${id} does not exist !`;
       }
       await category.destroy({ where: { id: id } });
@@ -56,15 +57,15 @@ class CategoryController {
         {
           name,
           baseColor,
-          icon
+          icon,
         },
         { where: { id: id } }
       );
       const updatedCategory = await category.findByPk(id);
-      if(!oldCategory || !updatedCategory){
+      if (!oldCategory || !updatedCategory) {
         throw `Category id ${id} does not exist !`;
       }
-      res.status(200).send({ message: `Success Update Category`, oldData: oldCategory, updatedData: updatedCategory})
+      res.status(200).send({ message: `Success Update Category`, oldData: oldCategory, updatedData: updatedCategory });
     } catch (error) {
       res.status(500).send({ message: `Error Update Category`, error });
     }
