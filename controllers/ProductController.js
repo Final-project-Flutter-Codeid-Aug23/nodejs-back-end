@@ -13,13 +13,13 @@ class ProductController {
         config = {
           where: {
             name: {
-              [Op.substring]: name
-            }
+              [Op.iLike]: "%" + name + "%",
+            },
           },
           include: [productImage, category],
           order: [["id", "ASC"]],
-        }
-      };
+        };
+      }
       const products = await product.findAll(config);
       res.status(200).send({ message: `Success Get Products`, data: products });
     } catch (error) {
@@ -37,7 +37,7 @@ class ProductController {
   }
   static async create(req, res) {
     try {
-      const { name, description, stock, price, images, categories, adminData} = req.body;
+      const { name, description, stock, price, images, categories, adminData } = req.body;
       const newProduct = await product.create({
         name,
         userId: +adminData.id,
