@@ -1,4 +1,4 @@
-const { cart, product } = require("../models");
+const { cart, product, productImage } = require("../models");
 
 class CartController {
   static async getCarts(req, res) {
@@ -6,7 +6,7 @@ class CartController {
       const userData = req.body.userData;
       const carts = await cart.findAll({
         where: { userId: userData.id },
-        include: product
+        include: { model: product, include: productImage },
       });
       res.status(200).send({ message: `Success Get Carts ${userData.username}`, data: carts });
     } catch (error) {
@@ -16,12 +16,17 @@ class CartController {
   static async add(req, res) {
     try {
       const { userData, productId, productCount } = req.body;
+      const productCart = await product.findByPk(+productId, { include: productImage });
+      const existCart = await cart.findOne({where: {userId: userData.id, productId: +productId}});
+      if(existCart){
+        throw "This product is already in your carts"
+      }
       const newCart = await cart.create({
-        userId: +userData.id,
+        userId: userData.id,
         productId: +productId,
         productCount: +productCount,
       });
-      res.status(200).send({ message: `Success Adding Cart`, data: newCart });
+      res.status(200).send({ message: `Success Adding Cart`, data: { newCart, productCart } });
     } catch (error) {
       res.status(500).send({ message: `Error Adding Cart`, error });
     }
@@ -34,7 +39,7 @@ class CartController {
       if (!deletedCart) {
         throw `Cart id ${id} does not exist !`;
       }
-      await cart.destroy({ where: { id: id,  userId: userData.id} });
+      await cart.destroy({ where: { id: id, userId: userData.id } });
       res.status(200).send({ message: `Success Deleting Cart`, deletedData: deletedCart });
     } catch (error) {
       res.status(500).send({ message: `Error Deleting Cart`, error });
@@ -47,7 +52,7 @@ class CartController {
       const oldCart = await cart.findByPk(id, { include: product });
       await cart.update(
         {
-          productCount: +productCount
+          productCount: +productCount,
         },
         { where: { id: id, userId: userData.id } }
       );
