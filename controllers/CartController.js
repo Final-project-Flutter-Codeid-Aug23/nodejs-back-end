@@ -35,12 +35,16 @@ class CartController {
     try {
       const id = req.params.id;
       const userData = req.body.userData;
-      const deletedCart = await cart.findByPk(id, { include: product });
-      if (!deletedCart) {
+      const selectedCart = await cart.findByPk(id, { include: product });
+      if (!selectedCart) {
         throw `Cart id ${id} does not exist !`;
       }
-      await cart.destroy({ where: { id: id, userId: userData.id } });
-      res.status(200).send({ message: `Success Deleting Cart`, deletedData: deletedCart });
+      const deletedCart = await cart.destroy({ where: { id: +id, userId: +userData.id } });
+      if(deletedCart) {
+        res.status(200).send({ message: `Success Deleting Cart`, deletedData: selectedCart });
+      }else{
+        throw "Database not affected"
+      }
     } catch (error) {
       res.status(500).send({ message: `Error Deleting Cart`, error });
     }
