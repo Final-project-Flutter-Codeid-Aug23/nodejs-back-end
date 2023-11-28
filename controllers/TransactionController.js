@@ -1,4 +1,4 @@
-const { transaction, product, user, cart, payment, invoice } = require("../models");
+const { transaction, product, user, cart, payment, invoice, productImage } = require("../models");
 
 class TransactionController {
   static async getAllTransactions(req, res) {
@@ -16,7 +16,7 @@ class TransactionController {
       const userData = req.body.userData;
       const transactions = await transaction.findAll({
         where: { userId: userData.id },
-        include: [user, product, payment],
+        include: [user, { model: product, include: productImage }, payment],
       });
       res.status(200).send({ message: `Success Get Transactions ${userData.username}`, data: transactions });
     } catch (error) {
@@ -38,8 +38,10 @@ class TransactionController {
   static async checkout(req, res) {
     try {
       const { userData, productId, productCount, paymentId } = req.body;
-      const updatedProduct = await product.findOne({ where: { id: +productId } });
-      if (!updatedProduct) throw `Product does not exist`;
+      const updatedProduct = await product.findByPk(+productId, { include: productImage });
+      const selectedPayment = await product.findByPk(+paymentId);
+      if (!updatedProduct) throw { message: `Product does not exist` };
+      if (!selectedPayment) throw { message: `Payment does not exist` };
       await product.update({ stock: updatedProduct.stock - productCount }, { where: { id: +productId } });
       await cart.destroy({ where: { productId: +productId, userId: userData.id, productCount: +productCount } });
       const newTransaction = await transaction.create({
@@ -48,9 +50,14 @@ class TransactionController {
         productCount: +productCount,
         paymentId: +paymentId,
       });
-      res.status(200).send({ message: `Success Adding Transaction`, data: newTransaction });
+      res.status(200).send({
+        message: `Success Adding Transaction`,
+        dataTransaction: newTransaction,
+        dataProduct: updatedProduct,
+        dataPayment: selectedPayment,
+      });
     } catch (error) {
-      res.status(500).send({ message: `Error Adding Transaction`, error });
+      res.status(500).send({ message: `Error Adding Transaction`, error: error.message });
     }
   }
   static async delivery(req, res) {
@@ -61,13 +68,11 @@ class TransactionController {
       if (!oldTransaction) throw `Transaction does not exist`;
       await transaction.update({ status: "On Delivery" }, { where: { id: +id } });
       const updatedTransaction = await transaction.findOne({ where: { id: +id } });
-      res
-        .status(200)
-        .send({
-          message: `Success Update Status Delivery Transaction`,
-          oldData: oldTransaction,
-          updatedData: updatedTransaction,
-        });
+      res.status(200).send({
+        message: `Success Update Status Delivery Transaction`,
+        oldData: oldTransaction,
+        updatedData: updatedTransaction,
+      });
     } catch (error) {
       res.status(500).send({ message: `Error Update Status Delivery Transaction`, error });
     }
@@ -80,13 +85,11 @@ class TransactionController {
       if (!oldTransaction) throw `Transaction does not exist`;
       await transaction.update({ status: "Arrived at Destination" }, { where: { id: +id } });
       const updatedTransaction = await transaction.findOne({ where: { id: +id } });
-      res
-        .status(200)
-        .send({
-          message: `Success Update Status Arrive Transaction`,
-          oldData: oldTransaction,
-          updatedData: updatedTransaction,
-        });
+      res.status(200).send({
+        message: `Success Update Status Arrive Transaction`,
+        oldData: oldTransaction,
+        updatedData: updatedTransaction,
+      });
     } catch (error) {
       res.status(500).send({ message: `Error Update Status Arrive Transaction`, error });
     }
@@ -106,13 +109,11 @@ class TransactionController {
         { where: { id: +oldTransaction.productId } }
       );
       const updatedTransaction = await transaction.findOne({ where: { id: +id } });
-      res
-        .status(200)
-        .send({
-          message: `Success Update Status Cancel Transaction`,
-          oldData: oldTransaction,
-          updatedData: updatedTransaction,
-        });
+      res.status(200).send({
+        message: `Success Update Status Cancel Transaction`,
+        oldData: oldTransaction,
+        updatedData: updatedTransaction,
+      });
     } catch (error) {
       res.status(500).send({ message: `Error Update Status Cancel Transaction`, error });
     }
@@ -132,13 +133,11 @@ class TransactionController {
         { unitSold: updatedProduct.unitSold + oldTransaction.productCount },
         { where: { id: +oldTransaction.productId } }
       );
-      res
-        .status(200)
-        .send({
-          message: `Success Update Status Done Transaction`,
-          oldData: oldTransaction,
-          updatedData: updatedTransaction,
-        });
+      res.status(200).send({
+        message: `Success Update Status Done Transaction`,
+        oldData: oldTransaction,
+        updatedData: updatedTransaction,
+      });
     } catch (error) {
       res.status(500).send({ message: `Error Update Status Done Transaction`, error });
     }
