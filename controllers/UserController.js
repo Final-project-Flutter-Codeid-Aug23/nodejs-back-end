@@ -56,13 +56,14 @@ class UserController {
         throw `Username is wrong !`;
       }
       if (decryptPwd(password, usernameFound.password)) {
-        const { username, email, fullname, avatar, address, isAdmin } = usernameFound;
+        const { id, username, email, fullname, avatar, address, isAdmin } = usernameFound;
         const access_token = tokenGenerator(usernameFound);
         res.status(200).send({
           message: `Success Login`,
           data: {
             access_token,
             userInfo: {
+              id,
               username,
               email,
               fullname,

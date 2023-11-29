@@ -42,7 +42,7 @@ class TransactionController {
       const selectedPayment = await product.findByPk(+paymentId);
       if (!updatedProduct) throw { message: `Product does not exist` };
       if (!selectedPayment) throw { message: `Payment does not exist` };
-      await product.update({ stock: updatedProduct.stock - productCount }, { where: { id: +productId } });
+      await product.update({ stock: updatedProduct.stock - productCount, unitSold: updatedProduct.unitSold + productCount }, { where: { id: +productId } });
       await cart.destroy({ where: { productId: +productId, userId: userData.id, productCount: +productCount } });
       const newTransaction = await transaction.create({
         userId: +userData.id,
